@@ -524,7 +524,7 @@ func (c *Config) StringMap(key string) (mp map[string]string) {
 		for k, v := range typeData {
 			mp[k] = fmt.Sprintf("%v", v)
 		}
-	case map[interface{}]interface{}: // if decode from yaml
+	case map[interface{}]interface{}: // decode from yaml
 		mp = make(map[string]string)
 		for k, v := range typeData {
 			sk := fmt.Sprintf("%v", k)
@@ -541,41 +541,6 @@ func (c *Config) StringMap(key string) (mp map[string]string) {
 			c.sMapCache = make(map[string]strMap)
 		}
 		c.sMapCache[key] = mp
-	}
-	return
-}
-
-// MapStruct alias method of the 'Structure'
-func MapStruct(key string, v interface{}) error { return dc.Structure(key, v) }
-
-// MapStruct alias method of the 'Structure'
-func (c *Config) MapStruct(key string, v interface{}) (err error) {
-	return c.Structure(key, v)
-}
-
-// Structure get config data and map to a structure.
-// usage:
-// 	dbInfo := Db{}
-// 	config.Structure("db", &dbInfo)
-func (c *Config) Structure(key string, v interface{}) (err error) {
-	var ok bool
-	var data interface{}
-
-	// map all data
-	if key == "" {
-		ok = true
-		data = c.data
-	} else {
-		data, ok = c.GetValue(key)
-	}
-
-	if ok {
-		blob, err := JSONEncoder(data)
-		if err != nil {
-			return err
-		}
-
-		err = JSONDecoder(blob, v)
 	}
 	return
 }

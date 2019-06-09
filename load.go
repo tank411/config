@@ -250,24 +250,9 @@ func (c *Config) loadFile(file string, loadExist bool) (err error) {
 
 // parse config source code to Config.
 func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
-	var ok bool
-	var decoder Decoder
-
-	switch format {
-	case Hcl:
-		decoder, ok = c.decoders[Hcl]
-	case Ini:
-		decoder, ok = c.decoders[Ini]
-	case JSON:
-		decoder, ok = c.decoders[JSON]
-	case Yaml, Yml:
-		decoder, ok = c.decoders[Yaml]
-	case Toml:
-		decoder, ok = c.decoders[Toml]
-	}
-
-	if !ok {
-		return errors.New("no exists or no register decoder for the format: " + format)
+	decoder := c.getDecoderByFormat(format)
+	if decoder == nil {
+		return errors.New("not exists or not register decoder for the format: " + format)
 	}
 
 	data := make(map[string]interface{})
@@ -287,5 +272,21 @@ func (c *Config) parseSourceCode(format string, blob []byte) (err error) {
 	}
 
 	data = nil
+	return
+}
+
+func (c *Config) getDecoderByFormat(format string) (decoder Decoder) {
+	switch format {
+	case Hcl:
+		decoder = c.decoders[Hcl]
+	case Ini:
+		decoder = c.decoders[Ini]
+	case JSON:
+		decoder = c.decoders[JSON]
+	case Yaml, Yml:
+		decoder = c.decoders[Yaml]
+	case Toml:
+		decoder = c.decoders[Toml]
+	}
 	return
 }
