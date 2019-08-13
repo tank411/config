@@ -141,12 +141,12 @@ func (c *Config) GetValue(key string, findByPath ...bool) (value interface{}, ok
 	}
 
 	// has sub key? eg. "lang.dir"
-	if !strings.Contains(key, ".") {
+	if !strings.Contains(key, ":") {
 		// c.addError(errNotFound)
 		return
 	}
 
-	keys := strings.Split(key, ".")
+	keys := strings.Split(key, ":")
 	topK := keys[0]
 
 	// find top item data based on top key
